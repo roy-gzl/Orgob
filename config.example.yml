@@ -1,0 +1,67 @@
+vault_root: "/ABSOLUTE/PATH/TO/YOUR/VAULT"
+
+inbox_dir: "_Inbox"
+attachments_dir: "_attachments"
+needs_review_dir: "_Inbox/needs_review"
+daily_dir: "00_DailyNote"
+progress_root: "10_Research/40_Progress"
+weekly_dir: "10_Research/40_Progress/weekly_summaries"
+monthly_dir: "10_Research/40_Progress/monthly_summaries"
+dictionary_path: "scripts/link_dictionary.yml"
+
+allowed_extensions:
+  - ".md"
+  - ".txt"
+  - ".pdf"
+  - ".png"
+  - ".jpg"
+  - ".jpeg"
+  - ".webp"
+  - ".gif"
+
+categories:
+  - path: "10_Research/00_Methods"
+    label: "methods"
+    keywords: ["method", "model", "architecture", "手法", "モデル", "実装"]
+  - path: "10_Research/10_Experiments"
+    label: "experiments"
+    keywords: ["experiment", "result", "evaluation", "実験", "結果", "評価", "loss"]
+  - path: "10_Research/20_Terms"
+    label: "terms"
+    keywords: ["term", "definition", "concept", "用語", "定義", "概念", "指標"]
+  - path: "10_Research/30_Writing"
+    label: "writing"
+    keywords: ["paper", "draft", "writing", "論文", "発表", "レポート"]
+  - path: "20_BookReading"
+    label: "bookreading"
+    keywords: ["book", "読書", "感想"]
+
+ai:
+  enabled: true
+  model: "gpt-5.4-mini"
+  timeout_sec: 45
+  prompt: |
+    You are a research-note classifier.
+    Return JSON only:
+    {"category":"...","reason":"..."}
+    category candidates:
+    - 10_Research/00_Methods
+    - 10_Research/10_Experiments
+    - 10_Research/20_Terms
+    - 10_Research/30_Writing
+    - 20_BookReading
+    - _Inbox/needs_review
+
+summary:
+  weekly_weekday: 1   # 0=Mon ... 6=Sun
+  monthly_day: 1
+  weekly_prompt: |
+    Create a concise weekly summary from Daily Notes in Markdown.
+  monthly_prompt: |
+    Create a concise monthly summary from weekly summaries in Markdown.
+
+git_backup:
+  enabled: true
+  push: true
+  remote: "origin"
+
