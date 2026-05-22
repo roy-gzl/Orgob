@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Short wrapper for the release pipeline."""
+
+from __future__ import annotations
+
+import argparse
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+
+
+def load_env(path: Path) -> None:
+    if not path.exists():
+        return
+    for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[len("export "):].strip()
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip("'\"")
+        if key:
+            os.environ.setdefault(key, value)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run the release Obsidian automation pipeline.")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--dry-run", action="store_true")
+    mode.add_argument("--apply", action="store_true")
+    parser.add_argument("mode", nargs="?", choices=["dry", "dry-run", "apply"], help="Shortcut mode. Default: dry-run")
+    parser.add_argument("--config", default="config.yml", help="Path to config file. Default: config.yml")
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    load_env(ROOT / ".env")
+
+    mode = "--apply" if args.apply or args.mode == "apply" else "--dry-run"
+    config = Path(args.config)
+    if not config.is_absolute():
+        config = ROOT / config
+
+    command = [sys.executable, "-B", str(ROOT / "scripts" / "pipeline.py"), mode, "--config", str(config)]
+    return subprocess.call(command, cwd=ROOT)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

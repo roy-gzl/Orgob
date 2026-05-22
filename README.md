@@ -42,26 +42,31 @@ cp config.example.yml config.yml
 
 4. Set your OpenAI API key (if using AI features)
 
+You can either export it in your shell, or keep it in a local `.env` file that is not committed.
+
 ```bash
-export OPENAI_API_KEY="sk-..."
+cp .env.example .env
+# then edit .env
 ```
 
 5. Run a dry-run first
 
 ```bash
-python scripts/pipeline.py --dry-run --config config.yml
+./maintain
+# or: python scripts/pipeline.py --dry-run --config config.yml
 ```
 
 6. Apply changes
 
 ```bash
-python scripts/pipeline.py --apply --config config.yml
+./maintain apply
+# or: python scripts/pipeline.py --apply --config config.yml
 ```
 
 ## Execution Modes
 
-- `--dry-run`: Preview planned changes only (no file modifications)
-- `--apply`: Execute moves, link insertion, summary generation, and Git backup
+- `./maintain` or `--dry-run`: Preview planned changes only (no file modifications)
+- `./maintain apply` or `--apply`: Execute moves, link insertion, summary generation, and Git backup
 
 ## Default Folders
 
@@ -86,6 +91,7 @@ Set `ai.enabled: false` in `config.yml` to run rule-based automation only. AI-ba
 
 ## Structure
 
+- `maintain`: Short wrapper for the main pipeline
 - `scripts/pipeline.py`: Main execution entrypoint
 - `scripts/config_ops.py`: Config loading and directory setup
 - `scripts/classify_ops.py`: Inbox classification and file moves
